@@ -14,7 +14,7 @@ function fzf_key_bindings
     command find -L \$dir -mindepth 1 \\( -path \$dir'*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' \\) -prune \
     -o -type f -print \
     -o -type d -print \
-    -o -type l -print 2> /dev/null | sed 's@^\./@@'"
+    -o -type l -print 2> /dev/null | string replace -r '^./' ''"
 
     set -q FZF_TMUX_HEIGHT; or set FZF_TMUX_HEIGHT 40%
     begin
@@ -40,8 +40,9 @@ function fzf_key_bindings
     begin
       set -lx FZF_DEFAULT_OPTS "--height $FZF_TMUX_HEIGHT $FZF_DEFAULT_OPTS --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS +m"
 
-      set -l FISH_MAJOR (echo $version | cut -f1 -d.)
-      set -l FISH_MINOR (echo $version | cut -f2 -d.)
+      set -l fish_version_list (string split . -- $version)
+      set -l FISH_MAJOR $fish_version_list[1]
+      set -l FISH_MINOR $fish_version_list[2]
 
       # history's -z flag is needed for multi-line support.
       # history's -z flag was added in fish 2.4.0, so don't use it for versions
@@ -64,7 +65,7 @@ function fzf_key_bindings
 
     set -q FZF_ALT_C_COMMAND; or set -l FZF_ALT_C_COMMAND "
     command find -L \$dir -mindepth 1 \\( -path \$dir'*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' \\) -prune \
-    -o -type d -print 2> /dev/null | sed 's@^\./@@'"
+    -o -type d -print 2> /dev/null | string replace -r '^./' ''"
     set -q FZF_TMUX_HEIGHT; or set FZF_TMUX_HEIGHT 40%
     begin
       set -lx FZF_DEFAULT_OPTS "--height $FZF_TMUX_HEIGHT --reverse $FZF_DEFAULT_OPTS $FZF_ALT_C_OPTS"
