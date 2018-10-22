@@ -105,19 +105,19 @@ function fzf_key_bindings
     # eval is used to do shell expansion on paths
     set -l commandline (eval "printf '%s' "(commandline -t))
 
-    if [ -z $commandline ]
+    if [ -z "$commandline" ]
       # Default to current directory with no --query
       set dir '.'
       set fzf_query ''
     else
       set dir (__fzf_get_dir $commandline)
 
-      if [ "$dir" = "." -a (string sub -l 1 $commandline) != '.' ]
+      if [ "$dir" = "." -a (string sub -l 1 -- $commandline) != '.' ]
         # if $dir is "." but commandline is not a relative path, this means no file path found
         set fzf_query $commandline
       else
         # Also remove trailing slash after dir, to "split" input properly
-        set fzf_query (string replace -r "^$dir/?" '' "$commandline")
+        set fzf_query (string replace -r -- "^$dir/?" '' "$commandline")
       end
     end
 
@@ -130,7 +130,7 @@ function fzf_key_bindings
 
     # Strip all trailing slashes. Ignore if $dir is root dir (/)
     if [ (string length $dir) -gt 1 ]
-      set dir (string replace -r '/*$' '' $dir)
+      set dir (string replace -r -- '/*$' '' $dir)
     end
 
     # Iteratively check if dir exists and strip tail end of path
