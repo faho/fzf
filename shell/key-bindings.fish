@@ -37,23 +37,21 @@ function fzf_key_bindings
 
   function fzf-history-widget -d "Show command history"
     set -q FZF_TMUX_HEIGHT; or set FZF_TMUX_HEIGHT 40%
-    begin
-      set -lx FZF_DEFAULT_OPTS "--height $FZF_TMUX_HEIGHT $FZF_DEFAULT_OPTS --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS +m"
+    set -lx FZF_DEFAULT_OPTS "--height $FZF_TMUX_HEIGHT $FZF_DEFAULT_OPTS --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS +m"
 
-      set -l fish_version_list (string split . -- $version)
-      set -l FISH_MAJOR $fish_version_list[1]
-      set -l FISH_MINOR $fish_version_list[2]
+    set -l fish_version_list (string split . -- $version)
+    set -l FISH_MAJOR $fish_version_list[1]
+    set -l FISH_MINOR $fish_version_list[2]
 
-      # history's -z flag is needed for multi-line support.
-      # history's -z flag was added in fish 2.4.0, so don't use it for versions
-      # before 2.4.0.
-      if [ "$FISH_MAJOR" -gt 2 -o \( "$FISH_MAJOR" -eq 2 -a "$FISH_MINOR" -ge 4 \) ];
+    # history's -z flag is needed for multi-line support.
+    # history's -z flag was added in fish 2.4.0, so don't use it for versions
+    # before 2.4.0.
+    if [ "$FISH_MAJOR" -gt 2 -o \( "$FISH_MAJOR" -eq 2 -a "$FISH_MINOR" -ge 4 \) ];
         history -z | __fzfcmd --read0 -q (commandline) | perl -pe 'chomp if eof' | read -lz result
         and commandline -- $result
-      else
+    else
         history | __fzfcmd -q (commandline) | read -l result
         and commandline -- $result
-      end
     end
     commandline -f repaint
   end
